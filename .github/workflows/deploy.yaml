@@ -11,7 +11,7 @@ on:
      - develop
 
 jobs:
- deploy_lambda_stack:
+ deploy_vpc_stack:
    runs-on: ubuntu-latest
    steps:
      - name: Checkout this repo
@@ -22,7 +22,7 @@ jobs:
        with:
          role-to-assume: ${{ vars.AWS_GITHUB_ACTIONS_ROLE }}
          aws-region: ${{ vars.AWS_TARGET_REGION }}
-         role-session-name: "GitHubActions-DeployLayerStack"
+         role-session-name: "DeployLayerStack"
 
      - name: Deploy TqsftVpcStack (via CDK)
        uses: youyo/aws-cdk-github-actions@v2
