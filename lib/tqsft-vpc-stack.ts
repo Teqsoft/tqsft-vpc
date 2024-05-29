@@ -1,14 +1,18 @@
-import { Stack, Construct, StackProps, RemovalPolicy } from '@aws-cdk/core';
-import { Vpc, SubnetType, SecurityGroup} from '@aws-cdk/aws-ec2';
-import { StringParameter } from '@aws-cdk/aws-ssm'
-import { FileSystem } from '@aws-cdk/aws-efs'
+import { Construct } from 'constructs';
+import { Stack, StackProps, RemovalPolicy } from 'aws-cdk-lib/core';
+import { Vpc, SubnetType, SecurityGroup, IpAddresses} from 'aws-cdk-lib/aws-ec2';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm'
+import { FileSystem } from 'aws-cdk-lib/aws-efs'
+import { Ipv6Vpc } from './ipv6-vpc'
 
 export class TqsftVpcStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const myVpc = new Vpc(this, 'VPC', {
-      cidr: process.env.VPC_CIDR,
+    var vpcCidr = (process.env.VPC_CIDR) ? process.env.VPC_CIDR : '10.0.10.0/24';
+
+    const myVpc = new Ipv6Vpc(this, 'VPC', {
+      ipAddresses: IpAddresses.cidr(vpcCidr),
       enableDnsHostnames: true,
       enableDnsSupport: true,
       maxAzs: 2,
