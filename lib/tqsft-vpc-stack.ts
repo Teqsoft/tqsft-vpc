@@ -87,11 +87,6 @@ export class TqsftVpcStack extends Stack {
       value: myVpc.isolatedRouteTablesId
     });
 
-    new CfnOutput(this, 'TqsftStackPrivateRouteTablesOutput', {
-      exportName: 'Tqsft-PrivateRouteTables',
-      value: myVpc.privateRouteTablesId
-    });
-
     new CfnOutput(this, 'TqsftStackPublicRouteTablesOutput', {
       exportName: 'Tqsft-PublicRouteTables',
       value: myVpc.publicRouteTablesId
