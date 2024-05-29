@@ -4,6 +4,9 @@ import { Construct } from 'constructs'
 
 export class Ipv6Vpc extends Vpc {
     public egressOnlyInternetGatewayId: string;
+    public publicRouteTablesId: string = "";
+    public privateRouteTablesId: string = "";
+    public isolatedRouteTablesId: string = "";
   
     constructor(scope: Construct, id: string, props?: VpcProps) {
       super(scope, id, props);
@@ -31,6 +34,30 @@ export class Ipv6Vpc extends Vpc {
         cfnSubnet.ipv6CidrBlock = Fn.select(i, subnetIpv6CidrBlocks);
         cfnSubnet.assignIpv6AddressOnCreation = true;
       });
+
+      this.isolatedSubnets.forEach((subnet, i) => {
+        if (i === 0) {
+          this.isolatedRouteTablesId = `${this.isolatedRouteTablesId}${subnet.routeTable.routeTableId}`
+        } else {
+          this.isolatedRouteTablesId = `${this.isolatedRouteTablesId},${subnet.routeTable.routeTableId}`
+        }
+      })
+
+      this.privateSubnets.forEach((subnet, i) => {
+        if (i === 0) {
+          this.privateRouteTablesId = `${this.privateRouteTablesId}${subnet.routeTable.routeTableId}`
+        } else {
+          this.privateRouteTablesId = `${this.privateRouteTablesId},${subnet.routeTable.routeTableId}`
+        }
+      })
+
+      this.publicSubnets.forEach((subnet, i) => {
+        if (i === 0) {
+          this.publicRouteTablesId = `${this.publicRouteTablesId}${subnet.routeTable.routeTableId}`
+        } else {
+          this.publicRouteTablesId = `${this.publicRouteTablesId},${subnet.routeTable.routeTableId}`
+        }
+      })
   
       const addDefaultIpv6Routes = (
         subnets: ISubnet[],

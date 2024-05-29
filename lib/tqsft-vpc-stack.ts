@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import { Stack, StackProps, RemovalPolicy } from 'aws-cdk-lib/core';
+import { Stack, StackProps, RemovalPolicy, CfnOutput } from 'aws-cdk-lib/core';
 import { Vpc, SubnetType, SecurityGroup, IpAddresses} from 'aws-cdk-lib/aws-ec2';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm'
 import { FileSystem } from 'aws-cdk-lib/aws-efs'
@@ -28,7 +28,7 @@ export class TqsftVpcStack extends Stack {
         }
       ],
       vpcName: 'Tqsft-Vpc',
-    })
+    });
 
     const efsSG = new SecurityGroup(this, "EFS-SG", {
       vpc: myVpc,
@@ -45,7 +45,7 @@ export class TqsftVpcStack extends Stack {
         subnetType: SubnetType.PRIVATE_ISOLATED
       },
       removalPolicy: RemovalPolicy.DESTROY
-    })
+    });
 
     new StringParameter(this, 'TqsftStackVpcId', {
       parameterName: 'TqsftStack-VpcId',
@@ -55,11 +55,47 @@ export class TqsftVpcStack extends Stack {
     new StringParameter(this, 'TqsftStackFsSgId', {
       parameterName: 'TqsftStack-FsSgId',
       stringValue: efsSG.securityGroupId
-    })
+    });
 
     new StringParameter(this, 'TqsftStackFsId', {
       parameterName: 'TqsftStack-FsId',
       stringValue: efs.fileSystemId
-    })
+    });
+
+    new CfnOutput(this, 'TqsftStackVpcIdOutput', {
+      exportName: 'Tqsft-VpcId',
+      value: myVpc.vpcId
+    });
+
+    new CfnOutput(this, 'TqsftStackFsSgIdOutput', {
+      exportName: 'Tqsft-FsSgId',
+      value: efsSG.securityGroupId
+    });
+
+    new CfnOutput(this, 'TqsftStackFsIdOutput', {
+      exportName: 'Tqsft-FsId',
+      value: efs.fileSystemId
+    });
+
+    new CfnOutput(this, 'TqsftStackVpcCidrOutput', {
+      exportName: 'Tqsft-VpcCidr',
+      value: vpcCidr
+    });
+
+    new CfnOutput(this, 'TqsftStackIsolatedRouteTablesOutput', {
+      exportName: 'Tqsft-IsolatedRouteTables',
+      value: myVpc.isolatedRouteTablesId
+    });
+
+    new CfnOutput(this, 'TqsftStackPrivateRouteTablesOutput', {
+      exportName: 'Tqsft-PrivateRouteTables',
+      value: myVpc.privateRouteTablesId
+    });
+
+    new CfnOutput(this, 'TqsftStackPublicRouteTablesOutput', {
+      exportName: 'Tqsft-PublicRouteTables',
+      value: myVpc.publicRouteTablesId
+    });
+
   }
 }
